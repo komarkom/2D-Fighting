@@ -2,9 +2,12 @@ package gameForms;
 
 import gameServer.Server;
 import gameServer.Message;
+import java.io.IOException;
 import javax.swing.ImageIcon;
 import java.util.ArrayList;
-import javax.swing.JOptionPane;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -190,9 +193,9 @@ public class Battle extends javax.swing.JFrame {
         jMenu1 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
         jMenuItem2 = new javax.swing.JMenuItem();
+        jMenuItem4 = new javax.swing.JMenuItem();
         jMenuItem3 = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
-        jMenuItem4 = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -488,6 +491,11 @@ public class Battle extends javax.swing.JFrame {
         jMenu1.setText("Файл");
 
         jMenuItem1.setText("Начать новую игру");
+        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem1ActionPerformed(evt);
+            }
+        });
         jMenu1.add(jMenuItem1);
 
         jMenuItem2.setText("Сохранить персонажа");
@@ -497,6 +505,14 @@ public class Battle extends javax.swing.JFrame {
             }
         });
         jMenu1.add(jMenuItem2);
+
+        jMenuItem4.setText("Загрузить песонажа");
+        jMenuItem4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem4ActionPerformed(evt);
+            }
+        });
+        jMenu1.add(jMenuItem4);
 
         jMenuItem3.setText("Выход");
         jMenuItem3.addActionListener(new java.awt.event.ActionListener() {
@@ -509,15 +525,6 @@ public class Battle extends javax.swing.JFrame {
         jMenuBar1.add(jMenu1);
 
         jMenu2.setText("Справка");
-
-        jMenuItem4.setText("Помощь");
-        jMenuItem4.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem4ActionPerformed(evt);
-            }
-        });
-        jMenu2.add(jMenuItem4);
-
         jMenuBar1.add(jMenu2);
 
         setJMenuBar(jMenuBar1);
@@ -609,72 +616,84 @@ public class Battle extends javax.swing.JFrame {
     }//GEN-LAST:event_jMenuItem3ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        if (countAttack != server.getPlayer().getAttackPoints())
-        {
-             battleLog += "Использованы не все очки атаки.\n";
-             logger.setText(battleLog);
-             return;
-        }
-        if (countDefense != server.getPlayer().getDefensePoints())
-        {
-             battleLog += "Использованы не все очки защиты.\n";
-             logger.setText(battleLog);
-             return;
-        }
-        
-        boolean[] attack = new boolean[6];
-        boolean[] defense = new boolean[6];
-
-        for (int i = 0; i < 6; ++i)
-        {
-            attack[i] = attackList.get(i).isSelected();
-            defense[i] = defenseList.get(i).isSelected();
-        }
-        
-        battleLog += server.translateMessage(new Message(attack,defense));
-        //<editor-fold defaultstate="collapsed" desc="Label text setting">
-        playerHPLabel.setText("HP: " +
-                        Integer.toString(server.getPlayer().getCurHP()) + "/" +
-                        Integer.toString(server.getPlayer().getMaxHP()));
-        botHPLabel.setText("HP: " +
-                        Integer.toString(server.getBot().getCurHP()) + "/" +
-                        Integer.toString(server.getBot().getMaxHP()));
-         for (int i = 0; i < 6; ++i){
-             attackLabelHpList.get(i).setText(Integer.toString(server.getBot().
-                                              getCurrentHpParts()[i]) + "/" +
-                                              Integer.toString(server.getBot().
-                                              getMaxHpParts()[i]));
-             defenseLabelHpList.get(i).setText(Integer.toString(server.
-                                               getPlayer().
-                                               getCurrentHpParts()[i]) + "/" +
-                                               Integer.toString(server.
-                                               getPlayer().getMaxHpParts()[i]));
-        }
-        //</editor-fold>
-        logger.setText(battleLog);
-        
-        if (server.getPlayer().isDead())
-        {
-            javax.swing.JOptionPane.showMessageDialog(this, "Игрок проиграл!", 
-                        "Поражение", javax.swing.JOptionPane.WARNING_MESSAGE);
-            server.translateMessage(new Message("create", 1));
-            this.dispose();
-        }
-        else if (server.getBot().isDead())
-        {
-            javax.swing.JOptionPane.showMessageDialog(this, "Игрок выиграл!", 
-                        "Победа", javax.swing.JOptionPane.WARNING_MESSAGE);
-            server.getPlayer().giveExp();
-            
-            if (server.getPlayer().getCurExp() >= server.getPlayer().getExpForLevel())
+        try {
+            if (countAttack != server.getPlayer().getAttackPoints())
             {
-                server.getPlayer().levelUp();
-                server.translateMessage(new Message("create", 2));
-                this.dispose();
+                battleLog += "Использованы не все очки атаки.\n";
+                logger.setText(battleLog);
                 return;
             }
+            if (countDefense != server.getPlayer().getDefensePoints())
+            {
+                battleLog += "Использованы не все очки защиты.\n";
+                logger.setText(battleLog);
+                return;
+            }
+            
+            boolean[] attack = new boolean[6];
+            boolean[] defense = new boolean[6];
+            
+            for (int i = 0; i < 6; ++i)
+            {
+                attack[i] = attackList.get(i).isSelected();
+                defense[i] = defenseList.get(i).isSelected();
+            }
+            
+            battleLog += server.translateMessage(new Message(attack,defense));
+            //<editor-fold defaultstate="collapsed" desc="Label text setting">
+            playerHPLabel.setText("HP: " +
+                    Integer.toString(server.getPlayer().getCurHP()) + "/" +
+                    Integer.toString(server.getPlayer().getMaxHP()));
+            botHPLabel.setText("HP: " +
+                    Integer.toString(server.getBot().getCurHP()) + "/" +
+                    Integer.toString(server.getBot().getMaxHP()));
+            for (int i = 0; i < 6; ++i){
+                attackLabelHpList.get(i).setText(Integer.toString(server.getBot().
+                        getCurrentHpParts()[i]) + "/" +
+                        Integer.toString(server.getBot().
+                                getMaxHpParts()[i]));
+                defenseLabelHpList.get(i).setText(Integer.toString(server.
+                        getPlayer().
+                        getCurrentHpParts()[i]) + "/" +
+                        Integer.toString(server.
+                                getPlayer().getMaxHpParts()[i]));
+            }
+            //</editor-fold>
+            logger.setText(battleLog);
+            
+            if (server.getPlayer().isDead())
+            {
+                try {
+                    javax.swing.JOptionPane.showMessageDialog(this, "Игрок проиграл!",
+                            "Поражение", javax.swing.JOptionPane.WARNING_MESSAGE);
+                    server.translateMessage(new Message("create", 1));
+                    this.dispose();
+                } catch (IOException ex) {
+                    Logger.getLogger(Battle.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+            else if (server.getBot().isDead())
+            {
+                javax.swing.JOptionPane.showMessageDialog(this, "Игрок выиграл!",
+                        "Победа", javax.swing.JOptionPane.WARNING_MESSAGE);
+                server.getPlayer().giveExp();
+                
+                if (server.getPlayer().getCurExp() >= server.getPlayer().getExpForLevel())
+                {
+                    try {
+                        server.getPlayer().levelUp();
+                        server.translateMessage(new Message("create", 2));
+                        this.dispose();
+                        return;
+                    } catch (IOException ex) {
+                        Logger.getLogger(Battle.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
                 server.translateMessage(new Message("create", 1));
                 this.dispose();
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(Battle.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_jButton1ActionPerformed
 
@@ -801,12 +820,24 @@ public class Battle extends javax.swing.JFrame {
     }//GEN-LAST:event_bodyAttackActionPerformed
 
     private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
-        // TODO add your handling code here:
+        try {
+            server.translateMessage(new Message("Save"));
+        } catch (IOException ex) {
+            Logger.getLogger(Battle.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
     }//GEN-LAST:event_jMenuItem2ActionPerformed
 
-    private void jMenuItem4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem4ActionPerformed
+    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
         // TODO add your handling code here:
-      JOptionPane.showMessageDialog(null, "Привет, салага!\n\n Сейчас ты получишь напутствие Легендрарного мастера пьяного кулака!\n Кхм... Так вот слушай:\n\n Для начала знай, что для победы тебе необходимо комбинировать защиту и нападение. \n Для того, чтобы это сделать выбери два пункта для защиты справа и два пункта для атаки слева. \n\n Знай, что если прочность твоей головы или тела будет равна 0, то ты проиграешь. \n Так же если тебе сломают руки и ноги, то ты не сможешь продолжить бой и опять проиграешь.\n\n После каждой победы ты можешь улучшить силу своего удара (атака), крепость своего тела(защита) или же свою живучесть(хп).\n\n Вот и все, что я хотел тебе сказать. Удачи на полях сражений!!!", "Помощь новичкам:", JOptionPane.INFORMATION_MESSAGE);
+    }//GEN-LAST:event_jMenuItem1ActionPerformed
+
+    private void jMenuItem4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem4ActionPerformed
+        try {
+            server.translateMessage(new Message("Load"));
+        } catch (IOException ex) {
+            Logger.getLogger(Battle.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_jMenuItem4ActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

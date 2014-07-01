@@ -1,11 +1,17 @@
 package gameServer;
 
 
-import сharacter.Player;
-import сharacter.Bot;
-import gameForms.LevelUp;
 import gameForms.Battle;
 import gameForms.City;
+import gameForms.LevelUp;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.PrintWriter;
+import сharacter.Bot;
+import сharacter.Player;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -43,7 +49,7 @@ public class Server
         return player;
     }
     
-    public String translateMessage(Message msg){
+    public String translateMessage(Message msg) throws FileNotFoundException, IOException{
         if (msg == null)
             return "NullMessage";
         
@@ -66,6 +72,37 @@ public class Server
                     if(msg.getChoice() == 2)
                         createLevelUpRoom();
                     break;
+            case("Save"):
+                    PrintWriter outputStream = new PrintWriter( new File("savePlayer.txt"));
+                    outputStream.println(player.getMaxHP());
+
+                    outputStream.println(player.getAttack());
+
+                    outputStream.println(player.getDefense());
+
+                    outputStream.println(player.getImagePath());
+
+                    outputStream.println(player.getCurExp());
+
+                    outputStream.println(player.getExpForLevel());
+
+                    outputStream.println(player.getLevel()); 
+
+                    
+                    int[] maxHpP = new int[6];
+                    maxHpP = player.getMaxHpParts();
+                    
+                    for (int i = 0; i < 6; i++){
+                        outputStream.println(maxHpP[i]);
+
+                    }
+                  
+                    outputStream.close();
+                    break;
+            case("Load"):
+                    player = new Player("savePlayer.txt");
+                    break;
+                    
         }
         return newMessage; 
     }

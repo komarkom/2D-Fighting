@@ -15,20 +15,24 @@ package сharacter;
 
 public abstract class Character{
     
-    protected int maxHp;
-    protected int currentHp;
+    protected int maxHp; //
+    protected int currentHp; 
     
-    protected int[] maxHpParts;
+    protected int[] maxHpParts; //
     protected int[] currentHpParts;
     
-    protected int attack;
-    protected int defense;
+    protected int attack;  //
+    protected int defense; //
     
     protected int countAttackPoints;
     protected int countDefensePoints;
     protected boolean[][] breakParts;
     
-    protected String ImagePath;
+    protected String ImagePath; //
+    
+    public String getImagePath(){
+        return ImagePath;
+    }
     
     public int getMaxHP(){
         return maxHp;

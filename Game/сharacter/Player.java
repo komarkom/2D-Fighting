@@ -1,6 +1,11 @@
 package сharacter;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.Random;
-import java.lang.Boolean;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -15,9 +20,10 @@ import java.lang.Boolean;
  */
 public class Player extends Character{
     
-    private int currentExp;
-    private int expForLevel;
-    private int level;
+    private int currentExp; //
+    private int expForLevel;  //
+    private int level; //
+
     
     public Player(){
         maxHp = 200;
@@ -46,6 +52,47 @@ public class Player extends Character{
         breakParts[0] = new boolean[6];
         breakParts[1] = new boolean[6];
     }
+    
+    public Player(String path) throws FileNotFoundException{
+        try {
+            BufferedReader inputStream = new BufferedReader( new FileReader(path));
+            StringBuilder sb = new StringBuilder();
+            sb.append(inputStream.readLine());
+            maxHp = Integer.parseInt(sb.toString());
+            currentHp = maxHp;
+            sb.append(inputStream.readLine());
+            attack = Integer.parseInt(sb.toString());
+            sb.append(inputStream.readLine());
+            defense = Integer.parseInt(sb.toString());
+            sb.append(inputStream.readLine());
+            ImagePath = sb.toString();
+            sb.append(inputStream.readLine());
+            currentExp = Integer.parseInt(sb.toString());
+            sb.append(inputStream.readLine());
+            expForLevel = Integer.parseInt(sb.toString());
+            sb.append(inputStream.readLine());
+            level = Integer.parseInt(sb.toString());
+            maxHpParts = new int[6];
+            currentHpParts = new int[6];
+            
+            for(int i = 0; i < 6; ++i)
+            {
+                sb.append(inputStream.readLine());
+                maxHpParts[i] = Integer.parseInt(sb.toString());
+                currentHpParts[i] = maxHpParts[i];
+            }
+            countDefensePoints = 2;
+            countAttackPoints = 2;
+            breakParts = new boolean[2][];
+            breakParts[0] = new boolean[6];
+            breakParts[1] = new boolean[6];
+            
+            inputStream.close();
+        } catch (IOException ex) {
+            Logger.getLogger(Player.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
     
     public final int getLevel(){
         return level;

@@ -34,6 +34,15 @@ public class Message
     public final String getType(){
         return type;
     }
+    public Message(final String epyt){
+        
+        this.type = epyt;
+        this.choice = 0;
+        
+        this.playerAttack = null;
+        this.playerDefense = null;
+        
+    }
     public Message(final String type, final int choice)
     {
         this.choice = choice;
