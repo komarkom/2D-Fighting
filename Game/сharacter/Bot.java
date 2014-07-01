@@ -1,26 +1,50 @@
+package сharacter;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package pkg2d_fighting;
-
 import java.util.Random;
 /**
  *
- * @author komarov
+ * @author Андрей Лихачев
+ * @author Кирилл Климук
+ * @author Даниил Комаров
  */
 public class Bot extends Character{
 
-    Bot()
-    {
+    public Bot(){
         maxHp = 100;
         currentHp = maxHp;
         attack = 5;
-        defense = 5;
+        defense = 3;
+        ImagePath = new String();
     }
     
-    @Override
+    public Bot(int level){
+        maxHp = 100;
+        attack = 5;
+        defense = 3;
+        if (level != 1)
+        {
+            Random rand = new Random();
+            for (int i = 0; i < level; ++i)
+            {
+                int r = rand.nextInt(2);
+                if (r == 0)
+                    this.upMaxHP(10);
+                else if (r == 1)
+                    this.upAttack(1);
+                else if (r == 2)
+                    this.upDefense(1);
+            }
+        }
+        currentHp = maxHp;
+        ImagePath = new String();
+    }
+    
+    
     public boolean[] choiceAttack() {
         
         boolean[] attack = new boolean[6];
@@ -39,8 +63,6 @@ public class Bot extends Character{
         
         return attack;
     }
-
-    @Override
     public boolean[] choiceDefense() {
         boolean[] defense = new boolean[6];
         
@@ -61,9 +83,10 @@ public class Bot extends Character{
     }
     
     @Override
-    String readMessage(boolean[] enemyAttack, boolean[] playerDefense, int enemyAttackPoints)
+    public String battleStep(boolean[] enemyAttack, boolean[] playerDefense, int enemyAttackPoints)
     {
         String battle_log = new String();
+        Random rand = new Random();
         
         int at1 = 0, at2 = 0;
         int def1 = 0, def2 = 0;
@@ -96,18 +119,15 @@ public class Bot extends Character{
             battle_log += "Бот парировал удар игрока.\n";
         else
         {
-            if (at1 == 0)
-                damage = enemyAttackPoints - defense + 5;
+             if (at1 == 0)
+                damage = rand.nextInt(enemyAttackPoints) - rand.nextInt(defense) + rand.nextInt(5);
             else if (at1 == 1)
-                damage = enemyAttackPoints - defense + 2;
-            else if (at1 == 2)
-                damage = enemyAttackPoints - defense + 1;
-            else if (at1 == 3)
-                damage = enemyAttackPoints - defense + 1;
-            else if (at1 == 4)
-                damage = enemyAttackPoints - defense;
-            else if (at1 == 5)
-                damage = enemyAttackPoints - defense;
+                damage = rand.nextInt(enemyAttackPoints) - rand.nextInt(defense) + rand.nextInt(3);
+            else
+                damage = rand.nextInt(enemyAttackPoints) - rand.nextInt(defense) + rand.nextInt(2);
+            
+            if (damage < 0)
+                damage = 0;
             
             battle_log += "Игрок нанес боту " + Integer.toString(damage) + " урона.\n";
             currentHp -= damage;
@@ -117,23 +137,18 @@ public class Bot extends Character{
         else 
         {
             if (at2 == 0)
-                damage = enemyAttackPoints - defense + 5;
+                damage = rand.nextInt(enemyAttackPoints) - rand.nextInt(defense) + rand.nextInt(5);
             else if (at2 == 1)
-                damage = enemyAttackPoints - defense + 2;
-            else if (at2 == 2)
-                damage = enemyAttackPoints - defense + 1;
-            else if (at2 == 3)
-                damage = enemyAttackPoints - defense + 1;
-            else if (at2 == 4)
-                damage = enemyAttackPoints - defense;
-            else if (at2 == 5)
-                damage = enemyAttackPoints - defense;
+                damage = rand.nextInt(enemyAttackPoints) - rand.nextInt(defense) + rand.nextInt(3);
+            else
+                damage = rand.nextInt(enemyAttackPoints) - rand.nextInt(defense) + rand.nextInt(2);
+            
+            if (damage <= 0)
+                damage = 1;
             
             battle_log += "Игрок нанес боту " + Integer.toString(damage) + " урона.\n";
             currentHp -= damage;
         }
-        
-        
         return battle_log;
     }
 }
