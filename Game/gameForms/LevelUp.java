@@ -42,6 +42,9 @@ public class LevelUp extends javax.swing.JFrame {
         hp = new javax.swing.JRadioButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Новый уровень!");
+        setLocationByPlatform(true);
+        setResizable(false);
 
         ok.setText("Поднять уровень");
         ok.addActionListener(new java.awt.event.ActionListener() {
@@ -65,18 +68,19 @@ public class LevelUp extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(0, 92, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(hp)
-                    .addComponent(attackPoint)
-                    .addComponent(defensePoint)
-                    .addComponent(ok))
-                .addGap(81, 81, 81))
             .addGroup(layout.createSequentialGroup()
-                .addGap(43, 43, 43)
-                .addComponent(sorryForLevelUP, javax.swing.GroupLayout.PREFERRED_SIZE, 214, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(43, 43, 43)
+                        .addComponent(sorryForLevelUP, javax.swing.GroupLayout.PREFERRED_SIZE, 243, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(97, 97, 97)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(attackPoint)
+                            .addComponent(hp)
+                            .addComponent(defensePoint)
+                            .addComponent(ok))))
+                .addContainerGap(41, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -100,12 +104,13 @@ public class LevelUp extends javax.swing.JFrame {
     private void okActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okActionPerformed
         // TODO add your handling code here:
         if (hp.isSelected())
-            server.translateMessage(new Message(0));
+            server.translateMessage(new Message("choice", 0));
         else if (attackPoint.isSelected())
-            server.translateMessage(new Message(1));
+            server.translateMessage(new Message("choice", 1));
         else if (defensePoint.isSelected())
-            server.translateMessage(new Message(2));
+            server.translateMessage(new Message("choice", 2));
         
+        server.translateMessage(new Message("create", 1));
         this.dispose();
     }//GEN-LAST:event_okActionPerformed
 

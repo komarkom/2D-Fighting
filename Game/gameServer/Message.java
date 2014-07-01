@@ -34,22 +34,21 @@ public class Message
     public final String getType(){
         return type;
     }
-    public Message(final int choice)
+    public Message(final String type, final int choice)
     {
         this.choice = choice;
-        type = "choice";
+        this.type = type;
         
         this.playerAttack = null;
-        this.playerDefense = null;
-        
+        this.playerDefense = null;    
     }
-    public Message(final boolean[] playerAttack, final boolean[] playerDefense)
+    public Message(final boolean[] playerAttack, final boolean[] playerDefense)       
     {
         this.playerAttack = playerAttack;
         this.playerDefense = playerDefense;
         
         type = "battleStep";
-        choice = 0;
+        choice = 0;   
     }
     
 }

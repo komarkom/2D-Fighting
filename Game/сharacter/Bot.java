@@ -14,82 +14,109 @@ import java.util.Random;
  */
 public class Bot extends Character{
 
-    public Bot(){
-        maxHp = 100;
-        currentHp = maxHp;
-        attack = 5;
-        defense = 3;
-        ImagePath = new String();
-    }
-    
     public Bot(int level){
-        maxHp = 100;
-        attack = 5;
-        defense = 3;
+        maxHp = 200;
+        attack = 10;
+        defense = 5;
+        maxHpParts = new int[6];
+        currentHpParts = new int[6];
+        
+        for(int i = 2; i < 6; ++i)
+        {
+            maxHpParts[i] = 75;
+            currentHpParts[i] = 75;
+        }
+        maxHpParts[0] = 150;
+        maxHpParts[1] = 200;
+        
         if (level != 1)
         {
             Random rand = new Random();
-            for (int i = 0; i < level; ++i)
+            for (int i = 0; i < level+2; ++i)
             {
                 int r = rand.nextInt(2);
                 if (r == 0)
-                    this.upMaxHP(10);
+                    this.upMaxHP(60);
                 else if (r == 1)
-                    this.upAttack(1);
+                    this.upAttack(2);
                 else if (r == 2)
-                    this.upDefense(1);
+                    this.upDefense(2);
             }
         }
         currentHp = maxHp;
         ImagePath = new String();
+        countDefensePoints = 2;
+        countAttackPoints = 2;
+        currentHpParts[0] = maxHpParts[0];
+        currentHpParts[1] = maxHpParts[1];
+        breakParts = new boolean[2][];
+        breakParts[0] = new boolean[6];
+        breakParts[1] = new boolean[6];
     }
     
-    
-    public boolean[] choiceAttack() {
+    public boolean[] choiceAttack(boolean[][] breakParts) {
         
         boolean[] attack = new boolean[6];
         Random rand = new Random();
-        int at1 = rand.nextInt(5);
-        int at2 = rand.nextInt(5);
-        
-        while (at1 == at2)
+        if (countAttackPoints != 0)
         {
-            at1 = rand.nextInt(5);
-            at2 = rand.nextInt(5);
+            int[] at = new int[countAttackPoints];
+            at[0] = rand.nextInt(6);
+            while (breakParts[0][at[0]])
+            {
+                at[0] = rand.nextInt(6);
+            }
+            if (countAttackPoints == 2)
+            {
+                at[1] = rand.nextInt(6);
+                while (at[0] == at[1] || breakParts[0][at[0]] || breakParts[0][at[1]])
+                {
+                    at[0] = rand.nextInt(6);
+                    at[1] = rand.nextInt(6);
+                }
+                attack[at[1]] = true;
+            }
+            attack[at[0]] = true;
         }
-        
-        attack[at1] = true;
-        attack[at2] = true;
-        
         return attack;
     }
-    public boolean[] choiceDefense() {
+    public boolean[] choiceDefense(boolean[][] breakParts) {
         boolean[] defense = new boolean[6];
         
         Random rand = new Random();
-        int def1 = rand.nextInt(5);
-        int def2 = rand.nextInt(5);
-        
-        while (def1 == def2)
+        if (countDefensePoints != 0)
         {
-            def1 = rand.nextInt(5);
-            def2 = rand.nextInt(5);
+            int[] def = new int[countDefensePoints];
+            def[0] = rand.nextInt(6);
+            while(breakParts[0][def[0]])
+                def[0] = rand.nextInt(6);
+            
+            if (countDefensePoints == 2)
+            {
+                def[1] = rand.nextInt(6);
+                while (def[0] == def[1] || breakParts[0][def[0]] 
+                        || breakParts[0][def[1]])
+                {
+                    def[0] = rand.nextInt(6);
+                    def[1] = rand.nextInt(6);
+                }
+                defense[def[1]] = true;
+            }
+            defense[def[0]] = true;
+            
         }
-        
-        defense[def1] = true;
-        defense[def2] = true;
-        
         return defense;
     }
     
     @Override
-    public String battleStep(boolean[] enemyAttack, boolean[] playerDefense, int enemyAttackPoints)
+    public String battleStep(boolean[] enemyAttack, boolean[] playerDefense,
+                             int enemyAttackPoints)
     {
-        String battle_log = new String();
+        String battle_log = "Ход игрока:\n";
         Random rand = new Random();
         
-        int at1 = 0, at2 = 0;
-        int def1 = 0, def2 = 0;
+        int at1 = -1, at2 = -1;
+        int def1 = -1, def2 = -1;
         boolean at = false, def = false;
         for (int i = 0; i < 6; ++i)
         {
@@ -115,39 +142,88 @@ public class Bot extends Character{
         }
         
         int damage = 0;
-        if (def1 == at1 || def2 == at1)
+        if (def1 != -1 && def2 != -1 && def1 == at1 || def2 == at1)
             battle_log += "Бот парировал удар игрока.\n";
-        else
+        else if(at1 != -1)
         {
-             if (at1 == 0)
-                damage = rand.nextInt(enemyAttackPoints) - rand.nextInt(defense) + rand.nextInt(5);
-            else if (at1 == 1)
-                damage = rand.nextInt(enemyAttackPoints) - rand.nextInt(defense) + rand.nextInt(3);
-            else
-                damage = rand.nextInt(enemyAttackPoints) - rand.nextInt(defense) + rand.nextInt(2);
-            
+            damage = rand.nextInt(enemyAttackPoints) - rand.nextInt(defense);
+            switch(at1){
+                case(0):
+                    damage += rand.nextInt(5)-rand.nextInt(3);
+                    break;
+                case(1):
+                    damage += rand.nextInt(3);
+                    break;
+                case(2):
+                    damage += rand.nextInt(2);
+                    break;
+            }
             if (damage < 0)
                 damage = 0;
             
-            battle_log += "Игрок нанес боту " + Integer.toString(damage) + " урона.\n";
+            currentHpParts[at1] -= damage;
             currentHp -= damage;
+            battle_log += "Игрок нанес боту " + Integer.toString(damage) + " урона.\n";
+            if (currentHpParts[at1] <= 0)
+            {
+                battle_log += "Игрок сломал боту" + deadParts(at1);
+                breakParts[0][at1] = true;
+                if (at1 > 1)
+                {
+                    if (rand.nextInt(2) == 0)
+                        if (countAttackPoints != 0)
+                            --countAttackPoints;
+                        else 
+                            --countDefensePoints;
+                    else
+                        if (countDefensePoints != 0)
+                            --countDefensePoints;
+                        else 
+                            --countAttackPoints;
+                }
+            }    
         }
-        if (def1 == at2 || def2 == at2)
+        if (def1 != -1 && def2 != -1 && def1 == at2 || def2 == at2)
             battle_log += "Бот парировал удар игрока.\n";
-        else 
+        else if(at2 != -1)
         {
-            if (at2 == 0)
-                damage = rand.nextInt(enemyAttackPoints) - rand.nextInt(defense) + rand.nextInt(5);
-            else if (at2 == 1)
-                damage = rand.nextInt(enemyAttackPoints) - rand.nextInt(defense) + rand.nextInt(3);
-            else
-                damage = rand.nextInt(enemyAttackPoints) - rand.nextInt(defense) + rand.nextInt(2);
+            damage = rand.nextInt(enemyAttackPoints) - rand.nextInt(defense);
+            switch(at2){
+                case(0):
+                    damage += rand.nextInt(5);
+                    break;
+                case(1):
+                    damage += rand.nextInt(3);
+                    break;
+                case(2):
+                    damage += rand.nextInt(2);
+                    break;
+            }
+            if (damage < 0)
+                damage = 0;
             
-            if (damage <= 0)
-                damage = 1;
+            currentHpParts[at2] -= damage;
+            currentHp -= damage;
             
             battle_log += "Игрок нанес боту " + Integer.toString(damage) + " урона.\n";
-            currentHp -= damage;
+            if (currentHpParts[at2] <= 0)
+            {
+                battle_log += "Игрок сломал боту" + deadParts(at2);
+                breakParts[0][at2] = true;
+                if (at2 > 1)
+                {
+                    if (rand.nextInt(2) == 0)
+                        if (countAttackPoints != 0)
+                            --countAttackPoints;
+                        else 
+                            --countDefensePoints;
+                    else
+                        if (countDefensePoints != 0)
+                            --countDefensePoints;
+                        else 
+                            --countAttackPoints;
+                }
+            }    
         }
         return battle_log;
     }
