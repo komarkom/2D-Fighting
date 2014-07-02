@@ -7,6 +7,7 @@ import javax.swing.ImageIcon;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 
 
 /*
@@ -196,6 +197,7 @@ public class Battle extends javax.swing.JFrame {
         jMenuItem4 = new javax.swing.JMenuItem();
         jMenuItem3 = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
+        jMenuItem5 = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -308,14 +310,15 @@ public class Battle extends javax.swing.JFrame {
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, attackManLayout.createSequentialGroup()
                         .addGroup(attackManLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(attackManLayout.createSequentialGroup()
-                                .addComponent(leftHandAttack)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(bodyAttack))
-                            .addGroup(attackManLayout.createSequentialGroup()
                                 .addGap(0, 0, Short.MAX_VALUE)
                                 .addGroup(attackManLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                                     .addComponent(labelAttackHpHead)
-                                    .addComponent(headAttack))))
+                                    .addComponent(headAttack)))
+                            .addGroup(attackManLayout.createSequentialGroup()
+                                .addGap(11, 11, 11)
+                                .addComponent(leftHandAttack)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(bodyAttack)))
                         .addGap(36, 36, 36)
                         .addComponent(labelAttackHpBody)
                         .addGap(51, 51, 51))
@@ -355,6 +358,8 @@ public class Battle extends javax.swing.JFrame {
                     .addComponent(labelAttackHpLeftLeg)
                     .addComponent(labelAttackHpRightLeg)))
         );
+
+        defenseMan.setPreferredSize(new java.awt.Dimension(280, 280));
 
         headDefense.setToolTipText("Защитить голову");
         headDefense.addActionListener(new java.awt.event.ActionListener() {
@@ -432,39 +437,35 @@ public class Battle extends javax.swing.JFrame {
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(defenseManLayout.createSequentialGroup()
                         .addComponent(leftHandDefense)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 76, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 74, Short.MAX_VALUE)
                         .addGroup(defenseManLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(defenseManLayout.createSequentialGroup()
                                 .addGap(10, 10, 10)
                                 .addComponent(bodyDefense)
                                 .addGap(18, 18, 18)
                                 .addComponent(labelDefenseHpBody))
-                            .addGroup(defenseManLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addComponent(headDefense)
-                                .addComponent(labelDefenseHpHead)))
+                            .addComponent(labelDefenseHpHead)
+                            .addComponent(headDefense))
                         .addGap(65, 65, 65))))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, defenseManLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap(222, Short.MAX_VALUE)
                 .addGroup(defenseManLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, defenseManLayout.createSequentialGroup()
-                        .addComponent(rightHandDefense)
-                        .addGap(50, 50, 50))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, defenseManLayout.createSequentialGroup()
-                        .addComponent(labelDefenseHpRightHand)
-                        .addGap(24, 24, 24))))
+                    .addComponent(rightHandDefense)
+                    .addComponent(labelDefenseHpRightHand))
+                .addGap(24, 24, 24))
         );
         defenseManLayout.setVerticalGroup(
             defenseManLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(defenseManLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(labelDefenseHpHead, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(17, 17, 17)
+                .addGap(18, 18, 18)
                 .addComponent(headDefense)
-                .addGap(5, 5, 5)
+                .addGap(4, 4, 4)
                 .addComponent(rightHandDefense)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(labelDefenseHpRightHand)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 41, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 45, Short.MAX_VALUE)
                 .addGroup(defenseManLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(defenseManLayout.createSequentialGroup()
                         .addComponent(leftHandDefense)
@@ -479,7 +480,7 @@ public class Battle extends javax.swing.JFrame {
                         .addGroup(defenseManLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(leftLegDefense)
                             .addGroup(defenseManLayout.createSequentialGroup()
-                                .addGap(0, 0, Short.MAX_VALUE)
+                                .addGap(0, 4, Short.MAX_VALUE)
                                 .addComponent(rightLegDefense)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(defenseManLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -525,6 +526,15 @@ public class Battle extends javax.swing.JFrame {
         jMenuBar1.add(jMenu1);
 
         jMenu2.setText("Справка");
+
+        jMenuItem5.setText("Помощь");
+        jMenuItem5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem5ActionPerformed(evt);
+            }
+        });
+        jMenu2.add(jMenuItem5);
+
         jMenuBar1.add(jMenu2);
 
         setJMenuBar(jMenuBar1);
@@ -534,7 +544,7 @@ public class Battle extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap(24, Short.MAX_VALUE)
+                .addContainerGap(26, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
@@ -578,7 +588,7 @@ public class Battle extends javax.swing.JFrame {
                     .addComponent(playerName)
                     .addComponent(playerIcon, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(botName))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 21, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 16, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(attackLabel)
@@ -608,6 +618,7 @@ public class Battle extends javax.swing.JFrame {
         botIcon.getAccessibleContext().setAccessibleName(" ");
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
@@ -840,6 +851,11 @@ public class Battle extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jMenuItem4ActionPerformed
 
+    private void jMenuItem5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem5ActionPerformed
+        // TODO add your handling code here:
+        JOptionPane.showMessageDialog(null, "Привет, салага!\n\n Сейчас ты получишь напутствие Легендрарного мастера пьяного кулака!\n Кхм... Так вот слушай:\n\n Для начала знай, что для победы тебе необходимо комбинировать защиту и нападение. \n Для того, чтобы это сделать выбери два пункта для защиты справа и два пункта для атаки слева. \n\n Знай, что если прочность твоей головы или тела будет равна 0, то ты проиграешь. \n Так же если тебе сломают руки и ноги, то ты не сможешь продолжить бой и опять проиграешь.\n\n После каждой победы ты можешь улучшить силу своего удара (атака), крепость своего тела(защита) или же свою живучесть(хп).\n\n Вот и все, что я хотел тебе сказать. Удачи на полях сражений!!!", "Помощь новичкам:", JOptionPane.INFORMATION_MESSAGE);
+    }//GEN-LAST:event_jMenuItem5ActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel attackLabel;
     private gameForms.ImagePanel attackMan;
@@ -861,6 +877,7 @@ public class Battle extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JMenuItem jMenuItem4;
+    private javax.swing.JMenuItem jMenuItem5;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel labelAttackHpBody;
     private javax.swing.JLabel labelAttackHpHead;
