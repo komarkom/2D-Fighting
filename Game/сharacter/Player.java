@@ -1,11 +1,6 @@
 package сharacter;
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.Random;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.io.*;
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -13,24 +8,24 @@ import java.util.logging.Logger;
  */
 
 /**
- *
- * @author Андрей Лихачев
+ * Класс игрока. 
+ * 
  * @author Кирилл Климук
+ * @author Андрей Лихачев
  * @author Даниил Комаров
  */
 public class Player extends Character{
     
-    private int currentExp; //
-    private int expForLevel;  //
-    private int level; //
-
+    private int currentExp;
+    private int expForLevel;
+    private int level;
     
     public Player(){
         maxHp = 200;
         currentHp = maxHp;
         attack = 7;
         defense = 5;
-        ImagePath = new String();
+        
         currentExp = 0;
         expForLevel = 10;
         level = 1;
@@ -52,47 +47,30 @@ public class Player extends Character{
         breakParts[0] = new boolean[6];
         breakParts[1] = new boolean[6];
     }
-    
-    public Player(String path) throws FileNotFoundException{
-        try {
-            BufferedReader inputStream = new BufferedReader( new FileReader(path));
-            StringBuilder sb = new StringBuilder();
-            sb.append(inputStream.readLine());
-            maxHp = Integer.parseInt(sb.toString());
-            currentHp = maxHp;
-            sb.append(inputStream.readLine());
-            attack = Integer.parseInt(sb.toString());
-            sb.append(inputStream.readLine());
-            defense = Integer.parseInt(sb.toString());
-            sb.append(inputStream.readLine());
-            ImagePath = sb.toString();
-            sb.append(inputStream.readLine());
-            currentExp = Integer.parseInt(sb.toString());
-            sb.append(inputStream.readLine());
-            expForLevel = Integer.parseInt(sb.toString());
-            sb.append(inputStream.readLine());
-            level = Integer.parseInt(sb.toString());
-            maxHpParts = new int[6];
-            currentHpParts = new int[6];
-            
-            for(int i = 0; i < 6; ++i)
-            {
-                sb.append(inputStream.readLine());
-                maxHpParts[i] = Integer.parseInt(sb.toString());
-                currentHpParts[i] = maxHpParts[i];
-            }
-            countDefensePoints = 2;
-            countAttackPoints = 2;
-            breakParts = new boolean[2][];
-            breakParts[0] = new boolean[6];
-            breakParts[1] = new boolean[6];
-            
-            inputStream.close();
-        } catch (IOException ex) {
-            Logger.getLogger(Player.class.getName()).log(Level.SEVERE, null, ex);
+    public Player(final String fileName) throws java.io.IOException {
+        BufferedReader in = new BufferedReader(new FileReader(new File(fileName)
+                                                            .getAbsoluteFile()));
+        attack = Integer.parseInt(in.readLine());
+        currentExp = Integer.parseInt(in.readLine());
+        defense = Integer.parseInt(in.readLine());
+        expForLevel = Integer.parseInt(in.readLine());
+        level = Integer.parseInt(in.readLine());
+        maxHp = Integer.parseInt(in.readLine());
+        currentHp = maxHp;
+        maxHpParts = new int[6];
+        currentHpParts = new int[6];
+        
+        for(int i = 0; i < 6; ++i)
+        {
+            maxHpParts[i] = Integer.parseInt(in.readLine());
+            currentHpParts[i] = maxHpParts[i];
         }
+        countDefensePoints = 2;
+        countAttackPoints = 2;
+        breakParts = new boolean[2][];
+        breakParts[0] = new boolean[6];
+        breakParts[1] = new boolean[6]; 
     }
-
     
     public final int getLevel(){
         return level;
@@ -102,6 +80,12 @@ public class Player extends Character{
     }
     public final int getCurExp(){
         return currentExp;
+    }
+    public final int getAttackPoints(){
+        return countAttackPoints;
+    }
+    public final int getDefensePoints(){
+        return countDefensePoints;
     }
     
     public void giveExp(){
@@ -123,6 +107,7 @@ public class Player extends Character{
         int at1 = -1, at2 = -1;
         int def1 = -1, def2 = -1;
         boolean at = false, def = false;
+        //<editor-fold defaultstate="collapsed" desc="Узнаем индексы выбранных частей">
         for (int i = 0; i < 6; ++i)
         {
             if (enemyAttack[i])
@@ -145,8 +130,9 @@ public class Player extends Character{
                 else
                     def2 = i;
         }
-        
+        //</editor-fold>
         int damage = 0;
+        //<editor-fold defaultstate="collapsed" desc="Расчет урона первой атаки">
         if (def1 != -1 && def2 != -1 && def1 == at1 || def2 == at1)
             battle_log += "Игрок парировал удар противника.\n";
         else if(at1 != -1)
@@ -188,6 +174,8 @@ public class Player extends Character{
                 }
             }    
         }
+        //</editor-fold>
+        //<editor-fold defaultstate="collapsed" desc="Расчет урона второй атаки">
         if (def1 != -1 && def2 != -1 && def1 == at2 || def2 == at2)
             battle_log += "Игрок парировал удар противника.\n";
         else if (at2 != -1)
@@ -229,13 +217,7 @@ public class Player extends Character{
                 }
             }
         }
+        //</editor-fold>
         return battle_log;
-    }
-    
-    public int getAttackPoints(){
-        return countAttackPoints;
-    }
-    public int getDefensePoints(){
-        return countDefensePoints;
-    }
+    }  
 }

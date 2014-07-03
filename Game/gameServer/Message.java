@@ -34,30 +34,26 @@ public class Message
     public final String getType(){
         return type;
     }
-    public Message(final String epyt){
-        
-        this.type = epyt;
-        this.choice = 0;
+    
+    public Message(final String type){
+        this.type = type;
+        choice = 0;
         
         this.playerAttack = null;
-        this.playerDefense = null;
-        
+        this.playerDefense = null; 
     }
-    public Message(final String type, final int choice)
-    {
+    public Message(final String type, final int choice){
         this.choice = choice;
         this.type = type;
         
         this.playerAttack = null;
         this.playerDefense = null;    
     }
-    public Message(final boolean[] playerAttack, final boolean[] playerDefense)       
-    {
+    public Message(final boolean[] playerAttack, final boolean[] playerDefense)       {
         this.playerAttack = playerAttack;
         this.playerDefense = playerDefense;
         
         type = "battleStep";
         choice = 0;   
     }
-    
 }

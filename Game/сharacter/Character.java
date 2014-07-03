@@ -15,24 +15,18 @@ package сharacter;
 
 public abstract class Character{
     
-    protected int maxHp; //
-    protected int currentHp; 
+    protected int maxHp;
+    protected int currentHp;
     
-    protected int[] maxHpParts; //
+    protected int[] maxHpParts;
     protected int[] currentHpParts;
     
-    protected int attack;  //
-    protected int defense; //
+    protected int attack;
+    protected int defense;
     
     protected int countAttackPoints;
     protected int countDefensePoints;
     protected boolean[][] breakParts;
-    
-    protected String ImagePath; //
-    
-    public String getImagePath(){
-        return ImagePath;
-    }
     
     public int getMaxHP(){
         return maxHp;
@@ -77,12 +71,16 @@ public abstract class Character{
     public void upDefense(final int value){
         defense += value;
     }
-    public void UpdateHp()
-    {
+    public void UpdateHp(){
         currentHp = maxHp;
         for (int i = 0; i < 6; ++i)
             currentHpParts[i] = maxHpParts[i];
     }
+    /**
+     * Возращает название сломанной часть
+     * @param value индекс части
+     * @return сломанная часть
+     */
     protected String deadParts(final int value){
         String str = new String();
         switch(value){
@@ -104,6 +102,15 @@ public abstract class Character{
         }
         return str;
     }
+    
+    /**
+     * Расчет результатов хода
+     * 
+     * @param enemyАttack Вражеский выбор атаки
+     * @param playerDefense Выбор защиты
+     * @param enemyAttackPoints Атака противника
+     * @return лог боя
+     */
     public abstract String battleStep(boolean[] enemyАttack, 
                                       boolean[] playerDefense, 
                                       int enemyAttackPoints);

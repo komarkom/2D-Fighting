@@ -7,7 +7,7 @@ package сharacter;
  */
 import java.util.Random;
 /**
- *
+ * Класс бота
  * @author Андрей Лихачев
  * @author Кирилл Климук
  * @author Даниил Комаров
@@ -16,7 +16,7 @@ public class Bot extends Character{
 
     public Bot(int level){
         maxHp = 200;
-        attack = 10;
+        attack = 7;
         defense = 5;
         maxHpParts = new int[6];
         currentHpParts = new int[6];
@@ -29,33 +29,33 @@ public class Bot extends Character{
         maxHpParts[0] = 150;
         maxHpParts[1] = 200;
         
-        if (level != 1)
+        Random rand = new Random();
+        for (int i = 0; i < level; ++i)
         {
-            Random rand = new Random();
-            for (int i = 0; i < level+2; ++i)
-            {
-                int r = rand.nextInt(2);
-                if (r == 0)
-                    this.upMaxHP(60);
-                else if (r == 1)
-                    this.upAttack(2);
-                else if (r == 2)
-                    this.upDefense(2);
-            }
+            int r = rand.nextInt(3);
+            if (r == 0)
+                this.upMaxHP(60);
+            else if (r == 1)
+                this.upAttack(2);
+            else if (r == 2)
+                this.upDefense(2);
         }
-        currentHp = maxHp;
-        ImagePath = new String();
+
+        
         countDefensePoints = 2;
         countAttackPoints = 2;
-        currentHpParts[0] = maxHpParts[0];
-        currentHpParts[1] = maxHpParts[1];
         breakParts = new boolean[2][];
         breakParts[0] = new boolean[6];
         breakParts[1] = new boolean[6];
     }
     
+    /**
+     * Выбор атаки ботом
+     * 
+     * @param breakParts сломанные части противника
+     * @return рандомный выбор бота
+     */
     public boolean[] choiceAttack(boolean[][] breakParts) {
-        
         boolean[] attack = new boolean[6];
         Random rand = new Random();
         if (countAttackPoints != 0)
@@ -80,7 +80,12 @@ public class Bot extends Character{
         }
         return attack;
     }
-    public boolean[] choiceDefense(boolean[][] breakParts) {
+    /**
+     * Выбор защиты ботом
+     * 
+     * @return рандомный выбор бота
+     */
+    public boolean[] choiceDefense() {
         boolean[] defense = new boolean[6];
         
         Random rand = new Random();
@@ -118,6 +123,7 @@ public class Bot extends Character{
         int at1 = -1, at2 = -1;
         int def1 = -1, def2 = -1;
         boolean at = false, def = false;
+        //<editor-fold defaultstate="collapsed" desc="Узнаем индексы выбранных частей">
         for (int i = 0; i < 6; ++i)
         {
             if (enemyAttack[i])
@@ -140,8 +146,9 @@ public class Bot extends Character{
                 else
                     def2 = i;
         }
-        
+        //</editor-fold>
         int damage = 0;
+        //<editor-fold defaultstate="collapsed" desc="Расчет урона первой атаки">
         if (def1 != -1 && def2 != -1 && def1 == at1 || def2 == at1)
             battle_log += "Бот парировал удар игрока.\n";
         else if(at1 != -1)
@@ -149,7 +156,7 @@ public class Bot extends Character{
             damage = rand.nextInt(enemyAttackPoints) - rand.nextInt(defense);
             switch(at1){
                 case(0):
-                    damage += rand.nextInt(5)-rand.nextInt(3);
+                    damage += rand.nextInt(5);
                     break;
                 case(1):
                     damage += rand.nextInt(3);
@@ -183,6 +190,8 @@ public class Bot extends Character{
                 }
             }    
         }
+        //</editor-fold>
+        //<editor-fold defaultstate="collapsed" desc="Расчет урона второй атаки">
         if (def1 != -1 && def2 != -1 && def1 == at2 || def2 == at2)
             battle_log += "Бот парировал удар игрока.\n";
         else if(at2 != -1)
@@ -225,6 +234,7 @@ public class Bot extends Character{
                 }
             }    
         }
+        //</editor-fold>
         return battle_log;
     }
 }

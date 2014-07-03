@@ -9,8 +9,11 @@ package gameForms;
 import gameServer.Server;
 import gameServer.Message;
 /**
- *
- * @author Пользователь
+ * Класс формы повышения уровня
+ * 
+ * @author Климук Кирилл
+ * @author Лихачев Андрей
+ * @author Комаров Даниил
  */
 public class LevelUp extends javax.swing.JFrame {
 
@@ -99,18 +102,30 @@ public class LevelUp extends javax.swing.JFrame {
         );
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * Обработка клавиши Поднять уровень
+     * @param evt 
+     */
     private void okActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okActionPerformed
         // TODO add your handling code here:
-        if (hp.isSelected())
-            server.translateMessage(new Message("choice", 0));
-        else if (attackPoint.isSelected())
-            server.translateMessage(new Message("choice", 1));
-        else if (defensePoint.isSelected())
-            server.translateMessage(new Message("choice", 2));
-        
-        server.translateMessage(new Message("create", 1));
+        try{
+            if (hp.isSelected())
+                server.translateMessage(new Message("choice", 0));
+            else if (attackPoint.isSelected())
+                server.translateMessage(new Message("choice", 1));
+            else if (defensePoint.isSelected())
+                server.translateMessage(new Message("choice", 2));
+            else
+                return;
+
+            server.translateMessage(new Message("create", 1));
+        }
+        catch(java.io.IOException e){
+            
+        }
         this.dispose();
     }//GEN-LAST:event_okActionPerformed
 

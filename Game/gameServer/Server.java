@@ -1,18 +1,13 @@
 package gameServer;
 
 
-import gameForms.Battle;
-import gameForms.City;
-import gameForms.LevelUp;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.PrintWriter;
-import сharacter.Bot;
 import сharacter.Player;
-
+import сharacter.Bot;
+import gameForms.LevelUp;
+import gameForms.Battle;
+import gameForms.Menu;
+import java.io.*;
+import javax.swing.JOptionPane;
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -36,7 +31,7 @@ public class Server
     private Bot bot;
     private Battle battleRoom;
     private LevelUp levelUpRoom;
-    private City cityRoom;
+    private Menu menuRoom;
     
     public Server(){
         player = new Player();
@@ -49,7 +44,14 @@ public class Server
         return player;
     }
     
-    public String translateMessage(Message msg) throws FileNotFoundException, IOException{
+    /**
+     * Функция чтения сообщения и обработки событий
+     * 
+     * @param msg сообщение
+     * @return ответ на сообщение
+     * @throws java.io.IOException
+     */
+    public String translateMessage(Message msg) throws java.io.IOException{
         if (msg == null)
             return "NullMessage";
         
@@ -68,51 +70,32 @@ public class Server
                     if(msg.getChoice() == 0)
                         createBattleRoom();
                     if(msg.getChoice() == 1)
-                        createCityRoom();
+                        createMenuRoom();
                     if(msg.getChoice() == 2)
                         createLevelUpRoom();
                     break;
-            case("Save"):
-                    PrintWriter outputStream = new PrintWriter( new File("savePlayer.txt"));
-                    outputStream.println(player.getMaxHP());
-
-                    outputStream.println(player.getAttack());
-
-                    outputStream.println(player.getDefense());
-
-                    outputStream.println(player.getImagePath());
-
-                    outputStream.println(player.getCurExp());
-
-                    outputStream.println(player.getExpForLevel());
-
-                    outputStream.println(player.getLevel()); 
-
-                    
-                    int[] maxHpP = new int[6];
-                    maxHpP = player.getMaxHpParts();
-                    
-                    for (int i = 0; i < 6; i++){
-                        outputStream.println(maxHpP[i]);
-
-                    }
-                  
-                    outputStream.close();
+            case("save"):
+                    savePlayer();
                     break;
-            case("Load"):
-                    player = new Player("savePlayer.txt");
+            case("load"):
+                    loadPlayer();
                     break;
-                    
         }
         return newMessage; 
     }
     
+    /**
+     * Функция обработки боевого хода
+     * 
+     * @param attack выбор атаки
+     * @param defense выбор защиты
+     * @return лог боя
+     */
     private String battleStep(final boolean[] attack, final boolean[] defense){
         String battleLog = new String();
         
-        battleLog += bot.battleStep(attack, 
-                                    bot.choiceDefense(player.getBreakParts()), 
-                                    player.getAttack());
+        battleLog += bot.battleStep(attack, bot.choiceDefense(), 
+                                            player.getAttack());
         battleLog += "\n";
         battleLog += player.battleStep(bot.choiceAttack(player.getBreakParts()),
                                        defense, 
@@ -130,9 +113,21 @@ public class Server
                     }
                     player.setInvalidBreakPart(i);
                 }
+                if(bot.getBreakParts()[0][i] && !bot.getBreakParts()[1][i])
+                {
+                    battleRoom.attackList.get(i).doClick();
+                    battleRoom.attackList.get(i).setEnabled(false);
+                    bot.setInvalidBreakPart(i);
+                }
         }
         return battleLog;
     }
+    /**
+     * Обработка выбора улучшаемой характеристики
+     * 
+     * @param choice индекс характеристики
+     * @return 
+     */
     private String choice(final int choice){
         if (choice == 0)
             player.upMaxHP(60);
@@ -141,8 +136,12 @@ public class Server
         else 
             player.upDefense(2);
         
+        player.UpdateHp();
         return null;
     }
+    /**
+     * Создание боевой комнаты
+     */
     private void createBattleRoom(){
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -167,6 +166,8 @@ public class Server
         }
         //</editor-fold>
         bot = new Bot(player.getLevel());
+        bot.UpdateHp();
+        player.UpdateHp();
         final Server server = this;
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
@@ -176,45 +177,28 @@ public class Server
                 battleRoom.setVisible(true);
             }
         });
-        cityRoom = null;
+        menuRoom = null;
         levelUpRoom = null;
     }
-    private void createCityRoom(){
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(City.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(City.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(City.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(City.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
+    /**
+     * Создание главного меню
+     */
+    private void createMenuRoom(){
         /* Create and display the form */
         final Server server = this;
         java.awt.EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                cityRoom = new City(server);
-                cityRoom.setVisible(true);
+                menuRoom = new Menu(server);
+                menuRoom.setVisible(true);
             }
         });
         battleRoom = null;
         levelUpRoom = null;
     }
+    /**
+     * Создание комнаты повышения уровня
+     */
     private void createLevelUpRoom(){
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -250,7 +234,26 @@ public class Server
             }
         });    
         battleRoom = null;
-        cityRoom = null;
+        menuRoom = null;
     }
     
+    private void savePlayer() throws java.io.IOException{
+        String fileName = JOptionPane.showInputDialog(menuRoom, "Введите название файла.");
+        PrintWriter out = new PrintWriter(new BufferedWriter
+                                         (new FileWriter("characters/" + fileName + ".chr")));
+        
+        out.println(Integer.toString(player.getAttack()));
+        out.println(Integer.toString(player.getCurExp()));
+        out.println(Integer.toString(player.getDefense()));
+        out.println(Integer.toString(player.getExpForLevel()));
+        out.println(Integer.toString(player.getLevel()));
+        out.println(Integer.toString(player.getMaxHP()));
+        for (int i = 0; i < 6; ++i)
+            out.println(Integer.toString(player.getMaxHpParts()[i]));
+        out.flush();
+    }
+    private void loadPlayer() throws java.io.IOException{
+         String fileName = JOptionPane.showInputDialog(menuRoom, "Введите название файла.");
+         player = new Player("characters/" + fileName + ".chr");
+    }
 }
